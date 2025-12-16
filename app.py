@@ -63,7 +63,7 @@ with col1:
         if check_solution():
             st.balloons()  # “confeti” nativo en Streamlit
             st.success("¡Lo lograste! 💛")
-            st.markdown("## Jazmín…\n### perdón.\n### te amo.")
+            st.markdown("## Jazmín…\n### Perdón.\n### Te Amo.")
         else:
             st.warning("Aún no… revisa las letras 😉")
 
