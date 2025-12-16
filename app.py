@@ -236,5 +236,16 @@ for r in range(SIZE):
 # ====== Final ======
 if TARGETS.issubset(st.session_state.found):
     st.balloons()
-    st.success("💛 ¡Ganaste! Encontraste todo.")
-    st.markdown("## Jazmín…\n### perdón.\n### te amo.")
+    st.success("💛 ¡Ganaste!")
+
+    st.markdown("## Jazmín…")
+    st.markdown("### Perdón.")
+    st.markdown("### Te amo.")
+
+    # Mostrar imagen final
+    img = Image.open("perdon.png")
+    st.image(
+        img,
+        caption="",
+        use_container_width=True
+    )
