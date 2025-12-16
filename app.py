@@ -1,83 +1,84 @@
 import streamlit as st
-from crossword import build_puzzle, is_cell_playable, solution_letter_at
+from crossword import build_puzzle
 
-st.set_page_config(page_title="Crucigrama: ¿Me perdonas?", page_icon="🧩", layout="centered")
+st.set_page_config(page_title="Para Jazmín 💛", page_icon="🧩", layout="centered")
 
-grid, is_block, placements = build_puzzle()
+# 🎵 Música de fondo (Coldplay – Trouble)
+# Nota: en algunos navegadores el autoplay puede estar bloqueado hasta que el usuario interactúe.
+st.markdown(
+    """
+    <iframe width="0" height="0"
+    src="https://www.youtube.com/embed/LLFokwpQfHQ?autoplay=1&loop=1&playlist=LLFokwpQfHQ"
+    frameborder="0"
+    allow="autoplay">
+    </iframe>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.title("🧩 Un pequeño juego para decirte algo")
+st.write("Completa las palabras usando las pistas. 💛")
+
+grid, _, placements = build_puzzle()
 SIZE = len(grid)
 
-st.title("🧩 Crucigrama")
-st.write("Completa las palabras. **Sin excusas, con cariño.**")
-
-with st.expander("📌 Pistas", expanded=True):
-    for p in placements:
-        st.markdown(f"- **{p.clue}**")
-
-# Session state for user entries
+# Estado de la grilla (lo que escribe el usuario)
 if "entries" not in st.session_state:
     st.session_state.entries = [["" for _ in range(SIZE)] for _ in range(SIZE)]
 
-def normalize(ch: str) -> str:
-    ch = (ch or "").strip().upper()
-    return ch[:1]  # single letter
+with st.expander("📌 Pistas", expanded=True):
+    for p in placements:
+        st.write(p.clue)
 
-# Render the grid as inputs
 st.subheader("🧠 Tablero")
+
+# Render del tablero como inputs
 for r in range(SIZE):
     cols = st.columns(SIZE, gap="small")
     for c in range(SIZE):
-        if not is_cell_playable(is_block, r, c):
-            cols[c].markdown(
-                "<div style='height:42px; background:#111827; border-radius:8px;'></div>",
-                unsafe_allow_html=True
-            )
-        else:
-            key = f"cell_{r}_{c}"
-            current = st.session_state.entries[r][c]
-            val = cols[c].text_input(
-                label="",
-                value=current,
-                key=key,
-                max_chars=1,
-                placeholder="",
-                label_visibility="collapsed",
-            )
-            st.session_state.entries[r][c] = normalize(val)
+        key = f"cell_{r}_{c}"
+        current = st.session_state.entries[r][c]
+        val = cols[c].text_input(
+            label="",
+            value=current,
+            max_chars=1,
+            key=key,
+            label_visibility="collapsed",
+        )
+        st.session_state.entries[r][c] = (val or "").strip().upper()[:1]
 
 def check_solution() -> bool:
-    for r in range(SIZE):
-        for c in range(SIZE):
-            if is_cell_playable(is_block, r, c):
-                target = solution_letter_at(grid, r, c).strip().upper()
-                user = (st.session_state.entries[r][c] or "").strip().upper()
-                if target == "":
-                    continue
-                if user != target:
-                    return False
+    # Solo verificamos las casillas que pertenecen a las palabras objetivo
+    for p in placements:
+        for (r, c), ch in zip(p.positions, p.word):
+            user = (st.session_state.entries[r][c] or "").strip().upper()
+            if user != ch:
+                return False
     return True
 
-colA, colB, colC = st.columns([1, 1, 1])
-with colA:
-    if st.button("✅ Verificar", use_container_width=True):
-        if check_solution():
-            st.success("¡LO LOGRASTE! 💛")
-            st.balloons()
-            st.markdown("### Jazmín… ¿me perdonas? 🥺")
-        else:
-            st.warning("Casi… revisa las letras 😉")
+col1, col2, col3 = st.columns(3)
 
-with colB:
+with col1:
+    if st.button("💛 Verificar", use_container_width=True):
+        if check_solution():
+            st.balloons()  # “confeti” nativo en Streamlit
+            st.success("¡Lo lograste! 💛")
+            st.markdown("## Jazmín…\n### perdón.\n### te amo.")
+        else:
+            st.warning("Aún no… revisa las letras 😉")
+
+with col2:
     if st.button("🧼 Limpiar", use_container_width=True):
         st.session_state.entries = [["" for _ in range(SIZE)] for _ in range(SIZE)]
         st.rerun()
 
-with colC:
+with col3:
     if st.button("👀 Mostrar solución", use_container_width=True):
-        for r in range(SIZE):
-            for c in range(SIZE):
-                if is_cell_playable(is_block, r, c):
-                    st.session_state.entries[r][c] = solution_letter_at(grid, r, c).strip().upper()
+        # Rellena SOLO las posiciones de las palabras (no toda la sopa)
+        for p in placements:
+            for (r, c), ch in zip(p.positions, p.word):
+                st.session_state.entries[r][c] = ch
         st.rerun()
 
 st.divider()
-st.caption("Tip: en la pista vertical, escribe **MEPERDONAS** (sin espacio).")
+st.caption("Tip: escribe una letra por casilla (en MAYÚSCULAS).")
