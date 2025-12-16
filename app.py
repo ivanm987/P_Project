@@ -1,3 +1,4 @@
+from PIL import Image
 import streamlit as st
 from crossword import build_puzzle
 
