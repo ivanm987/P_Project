@@ -36,7 +36,7 @@ def build_puzzle() -> Tuple[List[List[str]], List[List[bool]], List[WordPlacemen
         WordPlacement(
             word="PERDON",
             positions=perdon_pos,
-            clue="1️⃣ Diagonal: Lo que digo sin excusas."
+            clue="1️⃣ Diagonal: Palabra misteriosa."
         )
     )
 
@@ -47,7 +47,7 @@ def build_puzzle() -> Tuple[List[List[str]], List[List[bool]], List[WordPlacemen
         WordPlacement(
             word="JAZMIN",
             positions=jazmin_pos,
-            clue="2️⃣ Vertical: Tu nombre."
+            clue="2️⃣ Vertical: La persona que más amo."
         )
     )
 
@@ -59,7 +59,7 @@ def build_puzzle() -> Tuple[List[List[str]], List[List[bool]], List[WordPlacemen
         WordPlacement(
             word="TEAMO",
             positions=teamo_pos,
-            clue="3️⃣ Forma rara: Lo que siento, aunque me equivoqué."
+            clue="3️⃣ Forma rara: Lo que te dire todos los días de nuestras vidas."
         )
     )
 
